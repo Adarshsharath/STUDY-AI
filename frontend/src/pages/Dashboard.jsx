@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import ChatInterface from '../components/ChatInterface'
 import DocumentManager from '../components/DocumentManager'
+import StudyTools from '../components/StudyTools'
 import axios from 'axios'
 
 const Dashboard = () => {
@@ -11,6 +12,7 @@ const Dashboard = () => {
   const [currentChat, setCurrentChat] = useState(null)
   const [currentDocument, setCurrentDocument] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [showStudyLab, setShowStudyLab] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -103,7 +105,7 @@ const Dashboard = () => {
         onSelectChat={handleSelectChat}
         onDeleteChat={handleDeleteChat}
       />
-      
+
       <main className="flex-1 overflow-hidden">
         <Routes>
           <Route
@@ -113,6 +115,7 @@ const Dashboard = () => {
                 chat={currentChat}
                 document={currentDocument}
                 onNewChat={handleNewChat}
+                onOpenStudyLab={() => setShowStudyLab(true)}
               />
             }
           />
@@ -129,6 +132,13 @@ const Dashboard = () => {
           />
         </Routes>
       </main>
+
+      {showStudyLab && currentDocument && (
+        <StudyTools
+          document={currentDocument}
+          onClose={() => setShowStudyLab(false)}
+        />
+      )}
     </div>
   )
 }

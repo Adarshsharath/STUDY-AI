@@ -271,7 +271,8 @@ def send_message(current_user, chat_id):
     
     try:
         # Get AI response from Groq
-        ai_response = get_groq_response(document.extracted_text, data['message'])
+        no_context = data.get('no_context', False)
+        ai_response = get_groq_response(document.extracted_text, data['message'], no_context=no_context)
         
         # Save AI message
         ai_message = Message(
@@ -321,10 +322,29 @@ def delete_chat(current_user, chat_id):
 def health_check():
     return jsonify({'status': 'healthy'}), 200
 
+@app.route('/api/documents/<int:doc_id>/study-tools', methods=['POST'])
+@token_required
+def get_study_tools(current_user, doc_id):
+    document = Document.query.filter_by(id=doc_id, user_id=current_user.id).first()
+    if not document:
+        return jsonify({'message': 'Document not found!'}), 404
+        
+    data = request.json
+    tool_type = data.get('type') # flashcards, quiz, mindmap
+    
+    if tool_type not in ['flashcards', 'quiz', 'mindmap']:
+        return jsonify({'message': 'Invalid tool type!'}), 400
+        
+    try:
+        from groq_service import generate_study_material
+        result = generate_study_material(document.extracted_text, tool_type)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
 # ==================== DATABASE INITIALIZATION ====================
 
-with app.app_context():
-    db.create_all()
-
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True, port=5000)

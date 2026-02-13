@@ -6,9 +6,13 @@
   * {
     @apply border-gray-800;
   }
-  
+
   body {
-    @apply bg-gray-950 text-gray-100 antialiased;
+    @apply bg-gray-950 text-gray-100 antialiased transition-colors duration-300;
+  }
+
+  body.light {
+    @apply bg-[#f8f9fa] text-gray-900;
   }
 
   html {
@@ -21,6 +25,10 @@
     @apply bg-white/5 backdrop-blur-xl border border-white/10;
   }
 
+  .light .glass-morphism {
+    @apply bg-white/80 backdrop-blur-xl border border-gray-200 shadow-sm;
+  }
+
   .glass-morphism-dark {
     @apply bg-black/20 backdrop-blur-xl border border-white/5;
   }
@@ -28,6 +36,28 @@
   .gradient-border {
     @apply border border-transparent bg-clip-padding;
     background-image: linear-gradient(to right, rgba(14, 165, 233, 0.2), rgba(59, 130, 246, 0.2));
+  }
+}
+
+@layer utilities {
+  .light .bg-gray-950 {
+    @apply bg-[#f8f9fa];
+  }
+
+  .light .bg-gray-900\/50 {
+    @apply bg-white/80;
+  }
+
+  .light .text-gray-400 {
+    @apply text-gray-500;
+  }
+
+  .light .text-white {
+    @apply text-gray-900;
+  }
+
+  .light .border-white\/5 {
+    @apply border-gray-200;
   }
 }
 
@@ -54,6 +84,7 @@
   0% {
     background-position: -1000px 0;
   }
+
   100% {
     background-position: 1000px 0;
   }
@@ -61,12 +92,10 @@
 
 .animate-shimmer {
   animation: shimmer 2s infinite linear;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(to right,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%);
   background-size: 1000px 100%;
 }
 
@@ -76,6 +105,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -84,4 +114,118 @@
 
 .fade-in {
   animation: fadeIn 0.3s ease-out;
+}
+
+/* Markdown Styles for Chat */
+.markdown-content {
+  @apply text-[15px] leading-relaxed transition-colors duration-300;
+}
+
+.markdown-content p {
+  @apply mb-4 last:mb-0;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  @apply mb-4 ml-6 list-outside;
+}
+
+.markdown-content ul {
+  @apply list-disc;
+}
+
+.markdown-content ol {
+  @apply list-decimal;
+}
+
+.markdown-content li {
+  @apply mb-1;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4 {
+  @apply font-bold mb-3 mt-6 first:mt-0 text-white transition-colors duration-300;
+}
+
+.light .markdown-content h1,
+.light .markdown-content h2,
+.light .markdown-content h3,
+.light .markdown-content h4 {
+  @apply text-gray-900;
+}
+
+.markdown-content h1 {
+  @apply text-2xl;
+}
+
+.markdown-content h2 {
+  @apply text-xl;
+}
+
+.markdown-content h3 {
+  @apply text-lg;
+}
+
+.markdown-content code {
+  @apply px-1.5 py-0.5 bg-white/10 rounded font-mono text-sm text-primary-300 transition-colors duration-300;
+}
+
+.light .markdown-content code {
+  @apply bg-gray-100 text-primary-600;
+}
+
+.markdown-content pre {
+  @apply my-4 rounded-xl overflow-hidden border border-white/10;
+}
+
+.light .markdown-content pre {
+  @apply border-gray-200;
+}
+
+.markdown-content pre code {
+  @apply p-0 bg-transparent text-inherit;
+}
+
+.markdown-content blockquote {
+  @apply pl-4 border-l-4 border-primary-500/50 italic text-gray-400 my-4;
+}
+
+.light .markdown-content blockquote {
+  @apply text-gray-500 border-primary-400;
+}
+
+.markdown-content a {
+  @apply text-primary-400 hover:text-primary-300 underline underline-offset-4 transition-colors;
+}
+
+.markdown-content table {
+  @apply w-full border-collapse my-4 rounded-lg overflow-hidden;
+}
+
+.markdown-content th,
+.markdown-content td {
+  @apply p-3 border border-white/10 text-left;
+}
+
+.light .markdown-content th,
+.light .markdown-content td {
+  @apply border-gray-200;
+}
+
+.markdown-content th {
+  @apply bg-white/10 font-bold;
+}
+
+.light .markdown-content th {
+  @apply bg-gray-50;
+}
+
+.markdown-content hr {
+  @apply border-white/10 my-6;
+}
+
+.light .markdown-content hr {
+  @apply border-gray-200;
 }

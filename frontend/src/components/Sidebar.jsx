@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { 
-  MessageSquarePlus, 
-  FileText, 
-  History, 
-  LogOut, 
+import {
+  MessageSquarePlus,
+  FileText,
+  History,
+  LogOut,
   Sparkles,
   Trash2,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Moon,
+  Sun
 } from 'lucide-react'
 
 const Sidebar = ({ documents, chats, currentChat, onNewChat, onSelectChat, onDeleteChat }) => {
@@ -17,13 +19,34 @@ const Sidebar = ({ documents, chats, currentChat, onNewChat, onSelectChat, onDel
   const location = useLocation()
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [selectedDocument, setSelectedDocument] = useState(null)
+  const [isDarkMode, setIsDarkMode] = useState(!document.body.classList.contains('light'))
+
+  const toggleTheme = () => {
+    const newDarkMode = !isDarkMode
+    setIsDarkMode(newDarkMode)
+    if (newDarkMode) {
+      document.body.classList.remove('light')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.body.classList.add('light')
+      localStorage.setItem('theme', 'light')
+    }
+  }
+
+  React.useEffect(() => {
+    const savedTheme = localStorage.getItem('theme')
+    if (savedTheme === 'light') {
+      document.body.classList.add('light')
+      setIsDarkMode(false)
+    }
+  }, [])
 
   const handleNewChatClick = () => {
     if (documents.length === 0) {
       // Redirect to documents page
       return
     }
-    
+
     if (documents.length === 1) {
       onNewChat(documents[0].id)
     } else {
@@ -37,7 +60,7 @@ const Sidebar = ({ documents, chats, currentChat, onNewChat, onSelectChat, onDel
     const now = new Date()
     const diffTime = Math.abs(now - date)
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-    
+
     if (diffDays === 0) return 'Today'
     if (diffDays === 1) return 'Yesterday'
     if (diffDays < 7) return `${diffDays} days ago`
@@ -90,11 +113,10 @@ const Sidebar = ({ documents, chats, currentChat, onNewChat, onSelectChat, onDel
         <nav className="px-4 space-y-2">
           <Link
             to="/dashboard/documents"
-            className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${
-              location.pathname === '/dashboard/documents'
-                ? 'bg-white/10 text-white'
-                : 'text-gray-400 hover:bg-white/5 hover:text-white'
-            }`}
+            className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/dashboard/documents'
+              ? 'bg-white/10 text-white'
+              : 'text-gray-400 hover:bg-white/5 hover:text-white'
+              }`}
           >
             <FileText className="w-5 h-5" />
             <span>Documents</span>
@@ -119,11 +141,10 @@ const Sidebar = ({ documents, chats, currentChat, onNewChat, onSelectChat, onDel
                 chats.map((chat) => (
                   <div
                     key={chat.id}
-                    className={`group relative px-4 py-3 rounded-xl cursor-pointer transition-all ${
-                      currentChat?.id === chat.id
-                        ? 'bg-white/10 text-white'
-                        : 'text-gray-400 hover:bg-white/5 hover:text-white'
-                    }`}
+                    className={`group relative px-4 py-3 rounded-xl cursor-pointer transition-all hover-glow smooth-transition ${currentChat?.id === chat.id
+                      ? 'bg-white/10 text-white shadow-lg'
+                      : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                      }`}
                     onClick={() => onSelectChat(chat)}
                   >
                     <div className="flex items-start justify-between">
@@ -150,8 +171,16 @@ const Sidebar = ({ documents, chats, currentChat, onNewChat, onSelectChat, onDel
         )}
       </div>
 
-      {/* Logout */}
-      <div className="p-4 border-t border-white/5">
+      {/* Theme Toggle & Logout */}
+      <div className="p-4 border-t border-white/5 space-y-2">
+        <button
+          onClick={toggleTheme}
+          className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-gray-400 hover:text-primary-400 hover:bg-primary-500/10 rounded-xl transition-colors"
+          title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        >
+          {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          {!isCollapsed && <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>}
+        </button>
         <button
           onClick={logout}
           className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
