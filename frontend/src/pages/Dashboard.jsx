@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import ChatInterface from '../components/ChatInterface'
 import DocumentManager from '../components/DocumentManager'
 import StudyTools from '../components/StudyTools'
 import axios from 'axios'
-import { motion, AnimatePresence } from 'framer-motion'
 
 const Dashboard = () => {
   const [documents, setDocuments] = useState([])
@@ -15,7 +14,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true)
   const [showStudyLab, setShowStudyLab] = useState(false)
   const navigate = useNavigate()
-  const location = useLocation()
 
   useEffect(() => {
     loadDocuments()
@@ -98,7 +96,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-950 overflow-hidden font-sans antialiased text-gray-200">
+    <div className="flex h-screen bg-gray-950 overflow-hidden">
       <Sidebar
         documents={documents}
         chats={chats}
@@ -108,52 +106,39 @@ const Dashboard = () => {
         onDeleteChat={handleDeleteChat}
       />
 
-      <main className="flex-1 relative overflow-hidden flex flex-col">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="flex-1 h-full overflow-hidden"
-          >
-            <Routes location={location}>
-              <Route
-                path="/"
-                element={
-                  <ChatInterface
-                    chat={currentChat}
-                    document={currentDocument}
-                    onNewChat={handleNewChat}
-                    onOpenStudyLab={() => setShowStudyLab(true)}
-                  />
-                }
+      <main className="flex-1 overflow-hidden">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ChatInterface
+                chat={currentChat}
+                document={currentDocument}
+                onNewChat={handleNewChat}
+                onOpenStudyLab={() => setShowStudyLab(true)}
               />
-              <Route
-                path="/documents"
-                element={
-                  <DocumentManager
-                    documents={documents}
-                    onDocumentUploaded={handleDocumentUploaded}
-                    onDeleteDocument={handleDeleteDocument}
-                    onSelectDocument={(doc) => handleNewChat(doc.id)}
-                  />
-                }
+            }
+          />
+          <Route
+            path="/documents"
+            element={
+              <DocumentManager
+                documents={documents}
+                onDocumentUploaded={handleDocumentUploaded}
+                onDeleteDocument={handleDeleteDocument}
+                onSelectDocument={(doc) => handleNewChat(doc.id)}
               />
-            </Routes>
-          </motion.div>
-        </AnimatePresence>
+            }
+          />
+        </Routes>
       </main>
 
-      <AnimatePresence>
-        {showStudyLab && currentDocument && (
-          <StudyTools
-            document={currentDocument}
-            onClose={() => setShowStudyLab(false)}
-          />
-        )}
-      </AnimatePresence>
+      {showStudyLab && currentDocument && (
+        <StudyTools
+          document={currentDocument}
+          onClose={() => setShowStudyLab(false)}
+        />
+      )}
     </div>
   )
 }

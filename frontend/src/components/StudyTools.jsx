@@ -14,8 +14,7 @@ import {
     XCircle,
     Trophy,
     Loader2,
-    ArrowRight,
-    Sparkles
+    ArrowRight
 } from 'lucide-react'
 import mermaid from 'mermaid'
 
@@ -72,148 +71,86 @@ const StudyTools = ({ document, onClose }) => {
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-gray-950/90 backdrop-blur-xl">
-            {/* Background Glows */}
-            <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-gray-950/80 backdrop-blur-md">
             <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 30 }}
-                className="relative w-full max-w-6xl h-[90vh] glass-morphism rounded-[3rem] overflow-hidden flex flex-col shadow-[0_0_100px_rgba(0,0,0,0.8)] border border-white/10"
+                className="relative w-full max-w-5xl h-[85vh] glass-morphism rounded-3xl overflow-hidden flex flex-col shadow-2xl"
             >
                 {/* Header */}
-                <div className="px-8 py-6 border-b border-white/5 flex items-center justify-between bg-white/5 shadow-lg relative z-10">
-                    <div className="flex items-center space-x-5">
-                        <motion.div
-                            whileHover={{ rotate: 360 }}
-                            transition={{ duration: 0.8 }}
-                            className="w-14 h-14 bg-gradient-to-br from-primary-500 to-blue-600 rounded-[1.25rem] flex items-center justify-center shadow-xl shadow-primary-500/20"
-                        >
-                            <Brain className="w-8 h-8 text-white" />
-                        </motion.div>
+                <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/5">
+                    <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-blue-600 rounded-xl flex items-center justify-center">
+                            <Brain className="w-6 h-6 text-white" />
+                        </div>
                         <div>
-                            <h2 className="text-2xl font-black text-white tracking-tight uppercase">Study Lab</h2>
-                            <p className="text-[10px] text-primary-400 font-black uppercase tracking-[0.2em] mt-1 flex items-center">
-                                <span className="w-1.5 h-1.5 bg-primary-500 rounded-full mr-2 animate-pulse"></span>
-                                {document?.filename || 'Untitled Corpus'}
-                            </p>
+                            <h2 className="text-xl font-bold text-white">Study Lab</h2>
+                            <p className="text-xs text-gray-400 truncate max-w-[200px]">{document?.filename || 'Document'}</p>
                         </div>
                     </div>
 
-                    <div className="hidden md:flex bg-white/5 p-1.5 rounded-[1.5rem] border border-white/5 shadow-inner backdrop-blur-3xl">
+                    <div className="flex bg-black/20 p-1 rounded-xl border border-white/5">
                         <TabButton
                             active={activeTab === 'flashcards'}
                             onClick={() => setActiveTab('flashcards')}
                             icon={<Layers className="w-4 h-4" />}
-                            label="Key Cards"
+                            label="Flashcards"
                         />
                         <TabButton
                             active={activeTab === 'quiz'}
                             onClick={() => setActiveTab('quiz')}
                             icon={<HelpCircle className="w-4 h-4" />}
-                            label="Assessment"
+                            label="Quiz"
                         />
                         <TabButton
                             active={activeTab === 'mindmap'}
                             onClick={() => setActiveTab('mindmap')}
                             icon={<Network className="w-4 h-4" />}
-                            label="Nexus Map"
+                            label="Mind Map"
                         />
                     </div>
 
                     <button
                         onClick={onClose}
-                        className="w-12 h-12 flex items-center justify-center bg-white/5 hover:bg-red-500/20 rounded-2xl transition-all group active-press"
+                        className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white"
                     >
-                        <X className="w-6 h-6 text-gray-500 group-hover:text-red-400 transition-colors" />
+                        <X className="w-6 h-6" />
                     </button>
                 </div>
 
-                {/* Mobile Tabs */}
-                <div className="md:hidden flex bg-white/5 border-b border-white/5 p-2 overflow-x-auto no-scrollbar">
-                    <TabButton
-                        active={activeTab === 'flashcards'}
-                        onClick={() => setActiveTab('flashcards')}
-                        icon={<Layers className="w-4 h-4" />}
-                        label="Cards"
-                    />
-                    <TabButton
-                        active={activeTab === 'quiz'}
-                        onClick={() => setActiveTab('quiz')}
-                        icon={<HelpCircle className="w-4 h-4" />}
-                        label="Quiz"
-                    />
-                    <TabButton
-                        active={activeTab === 'mindmap'}
-                        onClick={() => setActiveTab('mindmap')}
-                        icon={<Network className="w-4 h-4" />}
-                        label="Map"
-                    />
-                </div>
-
-                {/* Content Area */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-gray-950/20">
-                    <AnimatePresence mode="wait">
-                        {loading ? (
-                            <motion.div
-                                key="loading"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="absolute inset-0 flex flex-col items-center justify-center space-y-6"
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto p-8 relative">
+                    {loading ? (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
+                            <Loader2 className="w-12 h-12 text-primary-500 animate-spin" />
+                            <p className="text-gray-400 animate-pulse font-medium">Generating {activeTab}...</p>
+                        </div>
+                    ) : error ? (
+                        <div className="flex flex-col items-center justify-center h-full space-y-4">
+                            <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center">
+                                <XCircle className="w-8 h-8 text-red-500" />
+                            </div>
+                            <p className="text-red-400 font-medium">{error}</p>
+                            <button
+                                onClick={() => fetchStudyMaterial(activeTab)}
+                                className="px-6 py-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors text-sm font-medium border border-white/10"
                             >
-                                <div className="relative">
-                                    <div className="w-20 h-20 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin"></div>
-                                    <Sparkles className="w-8 h-8 text-primary-400 absolute inset-0 m-auto animate-pulse" />
-                                </div>
-                                <div className="text-center">
-                                    <p className="text-white text-xl font-black uppercase tracking-widest">Architecting {activeTab}</p>
-                                    <p className="text-gray-500 text-xs font-bold uppercase mt-2 tracking-[0.3em]">AI Synthesis in progress</p>
-                                </div>
-                            </motion.div>
-                        ) : error ? (
-                            <motion.div
-                                key="error"
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                className="flex flex-col items-center justify-center h-full p-8 max-w-md mx-auto text-center"
-                            >
-                                <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center mb-6 border border-red-500/20 shadow-xl shadow-red-500/10">
-                                    <XCircle className="w-10 h-10 text-red-500" />
-                                </div>
-                                <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Synthesis Error</h3>
-                                <p className="text-gray-500 font-medium mb-8 leading-relaxed">{error}</p>
-                                <button
-                                    onClick={() => fetchStudyMaterial(activeTab)}
-                                    className="px-8 py-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all text-sm font-black uppercase tracking-widest border border-white/10 active-press hover-lift flex items-center space-x-3"
-                                >
-                                    <RotateCcw className="w-4 h-4" />
-                                    <span>Retry Analysis</span>
-                                </button>
-                            </motion.div>
-                        ) : (
-                            <motion.div
-                                key={activeTab}
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                                transition={{ duration: 0.4, ease: "easeOut" }}
-                                className="h-full"
-                            >
-                                {activeTab === 'flashcards' && data && (
-                                    <FlashcardsView cards={data} />
-                                )}
-                                {activeTab === 'quiz' && data && (
-                                    <QuizView questions={data} />
-                                )}
-                                {activeTab === 'mindmap' && data && (
-                                    <MindMapView structure={data} />
-                                )}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                                Try Again
+                            </button>
+                        </div>
+                    ) : (
+                        <AnimatePresence mode="wait">
+                            {activeTab === 'flashcards' && data && (
+                                <FlashcardsView cards={data} key="flashcards" />
+                            )}
+                            {activeTab === 'quiz' && data && (
+                                <QuizView questions={data} key="quiz" />
+                            )}
+                            {activeTab === 'mindmap' && data && (
+                                <MindMapView structure={data} key="mindmap" />
+                            )}
+                        </AnimatePresence>
+                    )}
                 </div>
             </motion.div>
         </div>
@@ -223,91 +160,120 @@ const StudyTools = ({ document, onClose }) => {
 const TabButton = ({ active, onClick, icon, label }) => (
     <button
         onClick={onClick}
-        className={`flex items-center space-x-3 px-6 py-3 rounded-[1.25rem] transition-all duration-300 font-black text-xs uppercase tracking-widest ${active
-            ? 'bg-gradient-to-r from-primary-500 to-blue-600 text-white shadow-xl shadow-primary-500/20'
-            : 'text-gray-500 hover:text-white hover:bg-white/5'
+        className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${active
+            ? 'bg-gradient-to-r from-primary-600 to-blue-600 text-white shadow-md'
+            : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
     >
         {icon}
-        <span>{label}</span>
+        <span className="text-sm font-medium">{label}</span>
     </button>
 )
 
 const FlashcardsView = ({ cards }) => {
     const [index, setIndex] = useState(0)
 
+    // Validate cards data
     if (!cards || !Array.isArray(cards) || cards.length === 0) {
         return (
-            <div className="h-full flex items-center justify-center px-8">
-                <div className="text-center p-12 bg-white/5 rounded-3xl border border-white/5">
-                    <Layers className="w-12 h-12 text-gray-700 mx-auto mb-4" />
-                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">No key cards synthesized</p>
-                </div>
+            <div className="h-full flex items-center justify-center">
+                <p className="text-gray-400">No key points available.</p>
             </div>
         )
     }
 
-    const handleNext = () => setIndex((prev) => (prev + 1) % cards.length)
-    const handlePrev = () => setIndex((prev) => (prev - 1 + cards.length) % cards.length)
+    const handleNext = () => {
+        setIndex((prev) => (prev + 1) % cards.length)
+    }
+
+    const handlePrev = () => {
+        setIndex((prev) => (prev - 1 + cards.length) % cards.length)
+    }
 
     const currentCard = cards[index]
+    if (!currentCard || !currentCard.title || !currentCard.description) {
+        return (
+            <div className="h-full flex items-center justify-center">
+                <p className="text-gray-400">Invalid card data.</p>
+            </div>
+        )
+    }
+
+    // Color schemes for variety
     const colorSchemes = [
-        { from: 'from-blue-600/20', to: 'to-indigo-600/20', border: 'border-blue-500/30', text: 'text-blue-400', glow: 'shadow-blue-500/20' },
-        { from: 'from-violet-600/20', to: 'to-purple-600/20', border: 'border-violet-500/30', text: 'text-violet-400', glow: 'shadow-violet-500/20' },
-        { from: 'from-emerald-600/20', to: 'to-cyan-600/20', border: 'border-emerald-500/30', text: 'text-emerald-400', glow: 'shadow-emerald-500/20' },
-        { from: 'from-amber-600/20', to: 'to-orange-600/20', border: 'border-amber-500/30', text: 'text-amber-400', glow: 'shadow-amber-500/20' }
+        { from: 'from-blue-500/20', to: 'to-cyan-500/20', border: 'border-blue-500/30', text: 'text-blue-400', glow: 'shadow-blue-500/25' },
+        { from: 'from-purple-500/20', to: 'to-pink-500/20', border: 'border-purple-500/30', text: 'text-purple-400', glow: 'shadow-purple-500/25' },
+        { from: 'from-green-500/20', to: 'to-emerald-500/20', border: 'border-green-500/30', text: 'text-green-400', glow: 'shadow-green-500/25' },
+        { from: 'from-orange-500/20', to: 'to-red-500/20', border: 'border-orange-500/30', text: 'text-orange-400', glow: 'shadow-orange-500/25' },
+        { from: 'from-indigo-500/20', to: 'to-blue-500/20', border: 'border-indigo-500/30', text: 'text-indigo-400', glow: 'shadow-indigo-500/25' },
     ]
+
     const scheme = colorSchemes[index % colorSchemes.length]
 
     return (
-        <div className="h-full flex flex-col items-center justify-center p-8 space-y-12">
+        <div className="h-full flex flex-col items-center justify-center space-y-8 px-4 py-8">
+            {/* Main Card */}
             <motion.div
                 key={index}
-                initial={{ opacity: 0, rotateY: 90, scale: 0.9 }}
-                animate={{ opacity: 1, rotateY: 0, scale: 1 }}
-                transition={{ type: "spring", damping: 15, stiffness: 100 }}
-                className={`relative w-full max-w-3xl bg-gradient-to-br ${scheme.from} ${scheme.to} backdrop-blur-2xl border ${scheme.border} rounded-[3rem] p-12 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] ${scheme.glow} cursor-default`}
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className={`relative w-full max-w-2xl bg-gradient-to-br ${scheme.from} ${scheme.to} backdrop-blur-xl border ${scheme.border} rounded-3xl p-10 shadow-2xl ${scheme.glow}`}
             >
-                <div className="absolute top-8 right-8 text-[10px] font-black text-white/20 uppercase tracking-[0.5em] mt-1">CORE CONCEPT</div>
+                {/* Number Badge */}
+                <div className={`absolute -top-4 -right-4 w-12 h-12 rounded-full bg-gradient-to-br ${scheme.from} ${scheme.to} border ${scheme.border} flex items-center justify-center font-bold ${scheme.text} shadow-lg`}>
+                    {index + 1}
+                </div>
 
-                <div className={`w-16 h-16 rounded-[1.5rem] bg-white/10 flex items-center justify-center mb-8 border border-white/10 shadow-inner`}>
+                {/* Icon */}
+                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${scheme.from} ${scheme.to} border ${scheme.border} flex items-center justify-center mb-6 shadow-lg`}>
                     <Layers className={`w-8 h-8 ${scheme.text}`} />
                 </div>
 
-                <div className="space-y-6 relative z-10">
-                    <h2 className="text-4xl font-black text-white tracking-tight leading-[1.1]">
-                        {currentCard.title}
-                    </h2>
-                    <div className="w-12 h-1.5 bg-white/10 rounded-full"></div>
-                    <p className="text-xl text-gray-300 font-medium leading-relaxed">
-                        {currentCard.description}
-                    </p>
-                </div>
+                {/* Title */}
+                <h2 className={`text-3xl font-bold ${scheme.text} mb-4 leading-tight`}>
+                    {currentCard.title}
+                </h2>
 
-                <div className="absolute -bottom-2 -left-2 w-32 h-32 bg-white/5 rounded-tr-[5rem] blur-2xl opacity-20"></div>
+                {/* Description */}
+                <p className="text-gray-200 text-lg leading-relaxed">
+                    {currentCard.description}
+                </p>
+
+                {/* Decorative Elements */}
+                <div className={`absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl ${scheme.from} ${scheme.to} rounded-tl-full opacity-10`}></div>
             </motion.div>
 
-            <div className="flex items-center space-x-10 p-4 bg-white/5 rounded-[2rem] border border-white/5 shadow-2xl">
-                <button onClick={handlePrev} className="p-4 hover:bg-white/10 rounded-2xl transition-all text-white active-press hover-lift">
-                    <ChevronLeft className="w-8 h-8" />
+            {/* Navigation */}
+            <div className="flex items-center space-x-8">
+                <button
+                    onClick={handlePrev}
+                    className="group p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all text-white border border-white/10 hover:scale-110 active:scale-95"
+                >
+                    <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
                 </button>
 
-                <div className="flex flex-col items-center min-w-[120px]">
-                    <span className="text-xs font-black text-gray-500 uppercase tracking-[0.3em] mb-3">{index + 1} / {cards.length}</span>
-                    <div className="flex space-x-1.5">
+                <div className="flex flex-col items-center">
+                    <div className="text-gray-400 font-bold text-lg mb-2">
+                        {index + 1} of {cards.length}
+                    </div>
+                    <div className="flex space-x-2">
                         {cards.map((_, i) => (
-                            <motion.div
+                            <div
                                 key={i}
-                                initial={false}
-                                animate={{ width: i === index ? 24 : 6, opacity: i === index ? 1 : 0.2 }}
-                                className={`h-1.5 rounded-full bg-primary-500 shadow-sm`}
+                                className={`h-1.5 rounded-full transition-all ${i === index ? 'w-8 bg-primary-500' : 'w-1.5 bg-white/20'
+                                    }`}
                             />
                         ))}
                     </div>
                 </div>
 
-                <button onClick={handleNext} className="p-4 hover:bg-white/10 rounded-2xl transition-all text-white active-press hover-lift">
-                    <ChevronRight className="w-8 h-8" />
+                <button
+                    onClick={handleNext}
+                    className="group p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all text-white border border-white/10 hover:scale-110 active:scale-95"
+                >
+                    <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                 </button>
             </div>
         </div>
@@ -321,13 +287,11 @@ const QuizView = ({ questions }) => {
     const [showResult, setShowResult] = useState(false)
     const [isFinished, setIsFinished] = useState(false)
 
+    // Validate questions data
     if (!questions || !Array.isArray(questions) || questions.length === 0) {
         return (
-            <div className="h-full flex items-center justify-center p-8">
-                <div className="text-center p-12 bg-white/5 rounded-3xl border border-white/5">
-                    <HelpCircle className="w-12 h-12 text-gray-700 mx-auto mb-4" />
-                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">No quiz generated</p>
-                </div>
+            <div className="h-full flex items-center justify-center">
+                <p className="text-gray-400">No quiz questions available.</p>
             </div>
         )
     }
@@ -336,134 +300,97 @@ const QuizView = ({ questions }) => {
         if (showResult) return
         setSelectedOption(optIndex)
         setShowResult(true)
-        if (optIndex === questions[index].correct_index) setScore(score + 1)
+        if (optIndex === questions[index].correct_index) {
+            setScore(score + 1)
+        }
     }
 
     const handleNext = () => {
         if (index + 1 < questions.length) {
-            setIndex(index + 1); setSelectedOption(null); setShowResult(false)
-        } else setIsFinished(true)
+            setIndex(index + 1)
+            setSelectedOption(null)
+            setShowResult(false)
+        } else {
+            setIsFinished(true)
+        }
     }
 
     if (isFinished) {
         return (
-            <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="h-full flex flex-col items-center justify-center text-center p-12 space-y-8"
-            >
-                <div className="relative">
-                    <div className="w-32 h-32 bg-yellow-500/10 rounded-[3rem] flex items-center justify-center shadow-2xl shadow-yellow-500/10 border border-yellow-500/20">
-                        <Trophy className="w-16 h-16 text-yellow-500" />
-                    </div>
-                    <Sparkles className="absolute -top-4 -right-4 w-10 h-10 text-yellow-400 animate-pulse" />
+            <div className="h-full flex flex-col items-center justify-center text-center space-y-6">
+                <div className="w-24 h-24 bg-yellow-500/10 rounded-full flex items-center justify-center">
+                    <Trophy className="w-12 h-12 text-yellow-500" />
                 </div>
                 <div>
-                    <h3 className="text-5xl font-black text-white tracking-tight uppercase">Ingestion Complete</h3>
-                    <p className="text-gray-500 text-lg font-medium mt-3">You demonstrated mastery over <span className="text-primary-400 font-black">{Math.round((score / questions.length) * 100)}%</span> of the material.</p>
-                </div>
-                <div className="flex bg-white/5 p-8 rounded-[2rem] border border-white/5 space-x-12">
-                    <div className="text-center">
-                        <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-1">SCORE</p>
-                        <p className="text-4xl font-black text-white">{score}</p>
-                    </div>
-                    <div className="w-px h-12 bg-white/10"></div>
-                    <div className="text-center">
-                        <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-1">TOTAL</p>
-                        <p className="text-4xl font-black text-white">{questions.length}</p>
-                    </div>
+                    <h3 className="text-3xl font-bold text-white">Quiz Finished!</h3>
+                    <p className="text-gray-400 text-lg mt-2">You scored {score} out of {questions.length}</p>
                 </div>
                 <button
-                    onClick={() => { setIndex(0); setScore(0); setSelectedOption(null); setShowResult(false); setIsFinished(false); }}
-                    className="px-12 py-5 bg-gradient-to-r from-primary-600 to-blue-700 hover:from-primary-500 hover:to-blue-600 text-white rounded-[1.5rem] font-black text-sm uppercase tracking-widest transition-all shadow-2xl shadow-primary-500/30 active-press hover-lift"
+                    onClick={() => {
+                        setIndex(0); setScore(0); setSelectedOption(null); setShowResult(false); setIsFinished(false);
+                    }}
+                    className="px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-primary-500/25"
                 >
-                    Restart Assessment
+                    Restart Quiz
                 </button>
-            </motion.div>
+            </div>
         )
     }
 
     const q = questions[index]
 
     return (
-        <div className="max-w-3xl mx-auto h-full flex flex-col p-8 md:p-12">
-            <div className="mb-12">
-                <div className="flex justify-between items-end mb-6">
-                    <div>
-                        <p className="text-primary-400 font-black text-xs tracking-[0.3em] uppercase mb-1">EVALUATION PHASE</p>
-                        <h4 className="text-gray-500 font-black text-xl uppercase tracking-widest">{index + 1} / {questions.length}</h4>
-                    </div>
-                    <div className="text-right">
-                        <p className="text-gray-600 text-[10px] font-black uppercase tracking-widest mb-1">CURRENT ACCURACY</p>
-                        <p className="text-2xl font-black text-white">{Math.round((score / (index + (showResult ? 1 : 0))) * 100) || 0}%</p>
-                    </div>
+        <div className="max-w-2xl mx-auto h-full flex flex-col">
+            <div className="mb-8">
+                <div className="flex justify-between items-end mb-4">
+                    <span className="text-primary-400 font-bold text-sm tracking-widest uppercase">Question {index + 1}/{questions.length}</span>
+                    <span className="text-gray-500 font-medium">Score: {score}</span>
                 </div>
-                <div className="w-full bg-white/5 h-3 rounded-full overflow-hidden border border-white/5 shadow-inner">
+                <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
                     <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${((index + 1) / questions.length) * 100}%` }}
-                        className="h-full bg-gradient-to-r from-primary-600 to-blue-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]"
+                        className="h-full bg-primary-500"
                     />
                 </div>
             </div>
 
-            <motion.h3
-                key={index}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-3xl font-black text-white mb-10 leading-tight tracking-tight"
-            >
-                {q.question}
-            </motion.h3>
+            <h3 className="text-2xl font-bold text-white mb-8 leading-tight">{q.question}</h3>
 
             <div className="space-y-4 flex-1">
                 {q.options.map((option, i) => {
-                    const isCorrect = i === q.correct_index
-                    const isSelected = i === selectedOption
-                    let styles = "bg-white/5 border-white/5 hover:bg-white/10 text-gray-400"
-
+                    let styles = "bg-white/5 border-white/10 hover:bg-white/10 text-gray-300"
                     if (showResult) {
-                        if (isCorrect) styles = "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-xl shadow-emerald-500/5"
-                        else if (isSelected) styles = "bg-red-500/10 border-red-500/30 text-red-400 shadow-xl shadow-red-500/5"
-                        else styles = "opacity-20 pointer-events-none grayscale"
+                        if (i === q.correct_index) styles = "bg-green-500/20 border-green-500/50 text-green-300"
+                        else if (i === selectedOption) styles = "bg-red-500/20 border-red-500/50 text-red-300"
+                        else styles = "opacity-40 grayscale pointer-events-none"
                     }
 
                     return (
-                        <motion.button
+                        <button
                             key={i}
-                            whileHover={!showResult ? { x: 10, backgroundColor: "rgba(255,255,255,0.08)" } : {}}
-                            whileTap={!showResult ? { scale: 0.98 } : {}}
                             onClick={() => handleOptionClick(i)}
-                            className={`w-full text-left p-6 rounded-[1.5rem] border transition-all duration-300 flex items-center justify-between group ${styles}`}
+                            className={`w-full text-left p-5 rounded-2xl border transition-all duration-200 flex items-center justify-between group ${styles}`}
                         >
-                            <span className="text-lg font-bold tracking-tight">{option}</span>
-                            <AnimatePresence>
-                                {showResult && isCorrect && (
-                                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}><CheckCircle2 className="w-6 h-6 text-emerald-500" /></motion.div>
-                                )}
-                                {showResult && isSelected && !isCorrect && (
-                                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}><XCircle className="w-6 h-6 text-red-500" /></motion.div>
-                                )}
-                            </AnimatePresence>
-                        </motion.button>
+                            <span className="font-medium">{option}</span>
+                            {showResult && i === q.correct_index && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                            {showResult && i === selectedOption && i !== q.correct_index && <XCircle className="w-5 h-5 text-red-500" />}
+                        </button>
                     )
                 })}
             </div>
 
-            <AnimatePresence>
-                {showResult && (
-                    <motion.button
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 20 }}
-                        onClick={handleNext}
-                        className="mt-12 w-full py-5 bg-white shadow-2xl text-black font-black uppercase text-xs tracking-[0.4em] rounded-[1.5rem] transition-all flex items-center justify-center space-x-3 hover:bg-primary-500 hover:text-white group"
-                    >
-                        <span>{index + 1 === questions.length ? 'Finalize Scan' : 'Next Transmission'}</span>
-                        <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-                    </motion.button>
-                )}
-            </AnimatePresence>
+            {showResult && (
+                <motion.button
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    onClick={handleNext}
+                    className="mt-8 w-full py-4 bg-white/10 hover:bg-primary-600 text-white font-bold rounded-2xl transition-all border border-white/5 flex items-center justify-center space-x-2"
+                >
+                    <span>{index + 1 === questions.length ? 'Show Results' : 'Next Question'}</span>
+                    <ArrowRight className="w-5 h-5" />
+                </motion.button>
+            )}
         </div>
     )
 }
@@ -473,19 +400,19 @@ const MindMapView = ({ structure }) => {
     const [renderError, setRenderError] = useState(null)
     const [isRendering, setIsRendering] = useState(true)
 
+    // Validate structure
     if (!structure || typeof structure !== 'object' || !structure.name) {
         return (
-            <div className="h-full flex items-center justify-center p-8">
-                <div className="text-center p-12 bg-white/5 rounded-3xl border border-white/5">
-                    <Network className="w-12 h-12 text-gray-700 mx-auto mb-4" />
-                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">No mind map structure available</p>
-                </div>
+            <div className="h-full flex items-center justify-center">
+                <p className="text-gray-400">No mind map data available.</p>
             </div>
         )
     }
 
     useEffect(() => {
-        if (structure) renderMermaid()
+        if (structure) {
+            renderMermaid()
+        }
     }, [structure])
 
     const renderMermaid = async () => {
@@ -494,71 +421,83 @@ const MindMapView = ({ structure }) => {
         setRenderError(null)
 
         const generateMermaidText = (node) => {
+            // Clean node names to avoid mermaid syntax issues
             const cleanName = (name) => {
                 if (!name) return 'Unknown'
+                // Remove special characters that might break mermaid syntax
                 return name.replace(/[(){}[\]"]/g, '').substring(0, 50)
             }
+
             let text = "mindmap\n  root((" + cleanName(node.name) + "))\n"
             const addChildren = (children, level) => {
                 if (!Array.isArray(children)) return
                 children.forEach(child => {
                     const indent = " ".repeat(level * 2)
                     text += indent + cleanName(child.name) + "\n"
-                    if (child.children && child.children.length > 0) addChildren(child.children, level + 1)
+                    if (child.children && child.children.length > 0) {
+                        addChildren(child.children, level + 1)
+                    }
                 })
             }
-            if (node.children && Array.isArray(node.children)) addChildren(node.children, 2)
+            if (node.children && Array.isArray(node.children)) {
+                addChildren(node.children, 2)
+            }
             return text
         }
 
         try {
             const mermaidText = generateMermaidText(structure)
+            console.log('Generated Mermaid syntax:', mermaidText)
+
             const { svg } = await mermaid.render('mindmap-svg-' + Date.now(), mermaidText)
             chartRef.current.innerHTML = svg
-        } catch (err) {
-            setRenderError(err.message || 'Error rendering mind map')
-            chartRef.current.innerHTML = `<div class="p-8 text-center text-red-400 font-bold">⚠️ Rendering Topology Failed</div>`
-        } finally {
             setIsRendering(false)
+        } catch (err) {
+            console.error('Mermaid render error:', err)
+            console.error('Structure:', structure)
+            setRenderError(err.message || 'Error rendering mind map')
+            setIsRendering(false)
+            chartRef.current.innerHTML = `<p class="text-red-400">Error rendering mind map. ${err.message}</p>`
         }
     }
 
     return (
-        <div className="h-full flex flex-col p-8 md:p-12">
-            <div className="mb-10 text-center">
-                <h3 className="text-4xl font-black text-white tracking-tight uppercase">Nexus Topology</h3>
-                <div className="flex items-center justify-center space-x-3 mt-3">
-                    <span className="h-px w-8 bg-white/10"></span>
-                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">Neural Mapping of Concepts</p>
-                    <span className="h-px w-8 bg-white/10"></span>
-                </div>
+        <div className="h-full flex flex-col p-4">
+            {/* Header */}
+            <div className="mb-6 text-center">
+                <h3 className="text-2xl font-bold text-white mb-2">Knowledge Map</h3>
+                <p className="text-gray-400 text-sm">Visual overview of key concepts and relationships</p>
             </div>
 
-            <div className="flex-1 overflow-auto bg-black/40 backdrop-blur-3xl rounded-[3rem] p-12 border border-white/5 shadow-inner relative group/map">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-blue-500/5 opacity-50"></div>
-
+            {/* Mind Map Container */}
+            <div className="flex-1 overflow-auto bg-gradient-to-br from-indigo-900/20 via-purple-900/20 to-blue-900/20 backdrop-blur-sm rounded-3xl p-8 border border-white/10 shadow-2xl relative">
                 {isRendering && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-md rounded-[3rem] z-20">
-                        <Loader2 className="w-12 h-12 text-primary-500 animate-spin" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm rounded-3xl z-10">
+                        <div className="flex flex-col items-center space-y-4">
+                            <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+                            <p className="text-gray-300 animate-pulse font-medium">Rendering mind map...</p>
+                        </div>
                     </div>
                 )}
-
                 <div
                     ref={chartRef}
-                    className="w-full h-full flex items-center justify-center mindmap-container transition-transform duration-500"
-                    style={{ minHeight: '600px' }}
+                    className="w-full h-full flex items-center justify-center mindmap-container"
+                    style={{
+                        minHeight: '500px'
+                    }}
                 ></div>
-
-                <div className="absolute bottom-8 right-8 flex items-center space-x-2 bg-black/60 px-4 py-2 rounded-full border border-white/10 opacity-0 group-hover/map:opacity-100 transition-opacity">
-                    <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></div>
-                    <span className="text-[9px] font-black text-white uppercase tracking-widest">Interactive Feed</span>
-                </div>
             </div>
 
-            <div className="mt-8 flex items-center justify-center">
-                <div className="px-6 py-3 bg-white/5 rounded-full border border-white/5 shadow-2xl">
-                    <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em]">
-                        {renderError ? 'Topology Reconstruction Required' : 'Scroll & Pan to Explorer Neural Nodes'}
+            {/* Footer */}
+            <div className="mt-4 flex items-center justify-center">
+                <div className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+                    <Network className="w-4 h-4 text-primary-400" />
+                    <p className="text-xs text-gray-400">
+                        {renderError ? (
+                            <span className="text-red-400">⚠️ Error rendering. Try refreshing.</span>
+                        ) : (
+                            'Scroll to explore the full knowledge structure'
+                        )}
                     </p>
                 </div>
             </div>
