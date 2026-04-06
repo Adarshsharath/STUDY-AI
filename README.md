@@ -1,316 +1,330 @@
-# AnswerXtractor – An AI That Reads For You
+# AnswerXtractor 📄🤖
 
-A production-ready AI web application that allows users to upload documents and ask questions based on the document content using Groq's LLM API.
-
-## 🌟 Features
-
-- **Authentication**: Secure user registration and login with JWT tokens
-- **Document Upload**: Support for PDF, DOCX, PPTX, and TXT files
-- **Intelligent Text Extraction**: Automatic text extraction from uploaded documents
-- **Context-Aware AI Chat**: Ask questions and get accurate answers based on document content
-- **No Hallucination**: AI strictly answers based on provided document context
-- **Chat History**: Persistent chat sessions with full conversation history
-- **Beautiful UI**: Dark theme with glassmorphism design inspired by modern AI interfaces
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **React** - UI framework
-- **Tailwind CSS** - Styling and design system
-- **Vite** - Build tool and dev server
-- **Axios** - HTTP client
-- **React Router** - Navigation
-- **Lucide React** - Icon library
-
-### Backend
-- **Python Flask** - Web framework
-- **SQLite** - Database
-- **SQLAlchemy** - ORM
-- **JWT** - Authentication
-- **Groq API** - LLM integration
-- **pdfplumber** - PDF text extraction
-- **python-docx** - DOCX text extraction
-- **python-pptx** - PPTX text extraction
-
-## 📋 Prerequisites
-
-- **Node.js** (v16 or higher)
-- **Python** (v3.8 or higher)
-- **Groq API Key** (Get it from [Groq Console](https://console.groq.com))
-
-## 🚀 Installation
-
-### 1. Clone the Repository
-
-```bash
-git clone <repository-url>
-cd answerxtractor
-```
-
-### 2. Backend Setup
-
-```bash
-# Navigate to backend directory
-cd backend
-
-# Create virtual environment
-python -m venv venv
-
-# Activate virtual environment
-# On Windows:
-venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Create .env file
-cp .env.example .env
-
-# Edit .env file and add your credentials:
-# SECRET_KEY=your-secret-key-here
-# GROQ_API_KEY=your-groq-api-key-here
-```
-
-### 3. Frontend Setup
-
-```bash
-# Navigate to frontend directory (from project root)
-cd frontend
-
-# Install dependencies
-npm install
-```
-
-## 🎯 Running the Application
-
-### Start Backend Server
-
-```bash
-# From backend directory with activated virtual environment
-python app.py
-```
-
-Backend will run on `http://localhost:5000`
-
-### Start Frontend Development Server
-
-```bash
-# From frontend directory
-npm run dev
-```
-
-Frontend will run on `http://localhost:3000`
-
-## 📖 Usage Guide
-
-### 1. Register an Account
-- Navigate to `http://localhost:3000/register`
-- Enter your email and password
-- Click "Create Account"
-
-### 2. Login
-- Navigate to `http://localhost:3000/login`
-- Enter your credentials
-- Click "Sign In"
-
-### 3. Upload a Document
-- Click "Documents" in the sidebar
-- Click the upload area or drag and drop a file
-- Supported formats: PDF, DOCX, PPTX, TXT
-- Wait for the upload to complete
-
-### 4. Start a Chat
-- Click "New Chat" button
-- Select a document (or it will auto-select if you have one)
-- Start asking questions about your document
-
-### 5. Ask Questions
-- Type your question in the input field
-- Press Enter or click the send button
-- The AI will respond based on the document content
-- If the answer isn't in the document, you'll get: "Not found in the document."
-
-### 6. View Chat History
-- All your chats are saved in the sidebar
-- Click on any previous chat to continue the conversation
-- Delete chats using the trash icon
-
-## 🗄️ Database Schema
-
-### Users Table
-```sql
-- id (Primary Key)
-- email (Unique)
-- password_hash
-- created_at
-```
-
-### Documents Table
-```sql
-- id (Primary Key)
-- user_id (Foreign Key → Users)
-- filename
-- extracted_text
-- uploaded_at
-```
-
-### Chats Table
-```sql
-- id (Primary Key)
-- user_id (Foreign Key → Users)
-- document_id (Foreign Key → Documents)
-- created_at
-```
-
-### Messages Table
-```sql
-- id (Primary Key)
-- chat_id (Foreign Key → Chats)
-- sender (user/ai)
-- message
-- timestamp
-```
-
-## 🔐 Security Features
-
-- Password hashing using Werkzeug
-- JWT token-based authentication
-- Protected API routes
-- CORS configuration
-- Secure file upload validation
-- SQL injection prevention via SQLAlchemy ORM
-
-## 🎨 UI Features
-
-- **Glassmorphism Design**: Modern frosted glass effect
-- **Dark Theme**: Easy on the eyes
-- **Responsive Layout**: Mobile-friendly design
-- **Smooth Animations**: Fade-in effects and transitions
-- **Loading States**: Clear feedback for async operations
-- **Error Handling**: User-friendly error messages
-
-## 📡 API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-
-### Documents
-- `GET /api/documents` - Get user's documents
-- `POST /api/documents/upload` - Upload new document
-- `DELETE /api/documents/<id>` - Delete document
-
-### Chats
-- `GET /api/chats` - Get user's chats
-- `POST /api/chats` - Create new chat
-- `GET /api/chats/<id>` - Get chat messages
-- `POST /api/chats/<id>/messages` - Send message
-- `DELETE /api/chats/<id>` - Delete chat
-
-### Health Check
-- `GET /api/health` - Check API status
-
-## 🤖 AI Behavior
-
-The system uses a strict prompt to prevent hallucination:
-
-```
-Answer ONLY using the provided document context.
-If the answer is not present in the document, respond with:
-"Not found in the document."
-```
-
-Model: **Llama 3.3 70B Versatile** (via Groq)
-- Temperature: 0.1 (for deterministic responses)
-- Max Tokens: 1024
-- Top P: 0.9
-
-## 🐛 Troubleshooting
-
-### Backend Issues
-
-**Database not created:**
-```bash
-python
->>> from app import app, db
->>> with app.app_context():
->>>     db.create_all()
-```
-
-**Import errors:**
-- Ensure virtual environment is activated
-- Run `pip install -r requirements.txt` again
-
-### Frontend Issues
-
-**Dependencies not installing:**
-```bash
-rm -rf node_modules package-lock.json
-npm install
-```
-
-**Build errors:**
-```bash
-npm run build
-```
-
-### Common Errors
-
-**CORS errors:**
-- Check that backend is running on port 5000
-- Verify CORS configuration in `app.py`
-
-**File upload fails:**
-- Check file size (max 16MB)
-- Verify file type is supported
-- Check backend logs for extraction errors
-
-## 📦 Production Deployment
-
-### Backend (Gunicorn + Nginx)
-
-```bash
-pip install gunicorn
-gunicorn -w 4 -b 0.0.0.0:5000 app:app
-```
-
-### Frontend (Build for Production)
-
-```bash
-npm run build
-# Deploy the 'dist' folder to your hosting service
-```
-
-### Environment Variables
-
-Production `.env`:
-```
-SECRET_KEY=<strong-random-key>
-GROQ_API_KEY=<your-groq-api-key>
-DATABASE_URL=<production-database-url>
-```
-
-## 🤝 Contributing
-
-This is a demo/hackathon project. Feel free to fork and customize!
-
-## 📄 License
-
-MIT License - Feel free to use this project for learning or commercial purposes.
-
-## 🙏 Credits
-
-- **UI Inspiration**: [Weave AI Healthcare Automation](https://dribbble.com/shots/27082338-Weave-AI-Healthcare-Automation)
-- **LLM Provider**: [Groq](https://groq.com)
-- **Icons**: [Lucide](https://lucide.dev)
-
-## 📞 Support
-
-For issues or questions, please open an issue on GitHub.
+> **AI-powered document Q&A app** — Upload a PDF, DOCX, PPTX, or TXT file and ask questions about it. Powered by Groq (Llama 3.3 70B).
 
 ---
 
-Built with ❤️ by Antigravity
+## Table of Contents
+
+1. [Project Overview](#project-overview)
+2. [Tech Stack](#tech-stack)
+3. [Prerequisites](#prerequisites)
+4. [Getting a Groq API Key](#getting-a-groq-api-key)
+5. [Installation on Windows](#installation-on-windows)
+   - [Backend Setup](#backend-setup)
+   - [Frontend Setup](#frontend-setup)
+6. [Running the Application](#running-the-application)
+7. [First Time Usage](#first-time-usage)
+8. [Project Structure](#project-structure)
+9. [Environment Variables](#environment-variables)
+10. [Troubleshooting](#troubleshooting)
+11. [Known Issues & Fixes](#known-issues--fixes)
+
+---
+
+## Project Overview
+
+AnswerXtractor lets you upload documents and ask natural language questions. The backend extracts text from your files, sends it to Groq's LLM API along with your question, and returns a grounded answer — no hallucination, only content from your document.
+
+**Supported file types:** PDF, DOCX, PPTX, TXT  
+**Max file size:** 16 MB
+
+---
+
+## Tech Stack
+
+| Layer      | Technology                        |
+|------------|-----------------------------------|
+| Frontend   | React + Vite + Tailwind CSS       |
+| Backend    | Flask + SQLAlchemy + SQLite       |
+| AI Model   | Groq API (Llama 3.3 70B)          |
+| Auth       | JWT (JSON Web Tokens)             |
+| Doc Parse  | pdfplumber, python-docx, python-pptx |
+
+---
+
+## Prerequisites
+
+Install all of the following before starting:
+
+### 1. Python 3.10 or later
+- Download from: https://www.python.org/downloads/
+- ✅ During installation, check **"Add Python to PATH"**
+- Verify: open Command Prompt and run:
+  ```
+  python --version
+  ```
+
+### 2. Node.js (v18 or later) + npm
+- Download from: https://nodejs.org/en/download
+- Choose the **LTS** version
+- Verify:
+  ```
+  node --version
+  npm --version
+  ```
+
+### 3. Git (optional, for cloning)
+- Download from: https://git-scm.com/download/win
+
+---
+
+## Getting a Groq API Key
+
+The backend requires a **free** Groq API key to use the AI model.
+
+1. Go to https://console.groq.com
+2. Sign up or log in with Google/GitHub
+3. Navigate to **API Keys** in the left sidebar
+4. Click **Create API Key**, give it a name
+5. **Copy the key** — you won't see it again!
+6. Save it for the `.env` setup step below
+
+---
+
+## Installation on Windows
+
+> ⚠️ All commands below are for **Windows Command Prompt** or **PowerShell**.  
+> If you're using WSL (Linux on Windows), replace `python` with `python3` and `venv\Scripts\activate` with `source venv/bin/activate`.
+
+### Backend Setup
+
+Open Command Prompt and navigate to the project backend:
+
+```cmd
+cd path\to\STUDY-AI\backend
+```
+
+**Step 1 — Create a virtual environment:**
+```cmd
+python -m venv venv
+```
+
+**Step 2 — Activate the virtual environment:**
+```cmd
+venv\Scripts\activate
+```
+You should see `(venv)` appear at the start of your prompt.
+
+**Step 3 — Install dependencies:**
+```cmd
+pip install -r requirements.txt
+```
+
+**Step 4 — Create the `.env` file:**
+
+Create a file named `.env` inside the `backend/` folder with this content:
+```
+SECRET_KEY=change-this-to-any-random-string
+GROQ_API_KEY=your-groq-api-key-here
+```
+
+Replace `your-groq-api-key-here` with the key you got from console.groq.com.
+
+> 💡 `SECRET_KEY` can be anything — it's used to sign JWT tokens. Example: `SECRET_KEY=abc123xyz-my-app-secret`
+
+---
+
+### Frontend Setup
+
+Open a **new** Command Prompt window and navigate to the frontend:
+
+```cmd
+cd path\to\STUDY-AI\frontend
+```
+
+**Step 1 — Install dependencies:**
+```cmd
+npm install
+```
+
+This will create a `node_modules` folder. It may take a minute.
+
+---
+
+## Running the Application
+
+You need **two terminal windows** running simultaneously.
+
+### Terminal 1 — Start the Backend
+
+```cmd
+cd path\to\STUDY-AI\backend
+venv\Scripts\activate
+python app.py
+```
+
+You should see output like:
+```
+ * Running on http://127.0.0.1:5000
+ * Press CTRL+C to quit
+```
+
+### Terminal 2 — Start the Frontend
+
+```cmd
+cd path\to\STUDY-AI\frontend
+npm run dev
+```
+
+You should see:
+```
+  VITE vX.X.X  ready in XXX ms
+  ➜  Local:   http://localhost:3000/
+```
+
+### Open the App
+
+Open your browser and go to:
+```
+http://localhost:3000
+```
+
+---
+
+## First Time Usage
+
+1. **Register** — Click "Sign up" and create an account (stored locally in SQLite)
+2. **Login** — Use your credentials
+3. **Upload a Document** — Go to Documents → Upload (PDF/DOCX/PPTX/TXT, max 16MB)
+4. **Ask Questions** — Click "New Chat" → Select your document → Start asking!
+
+### Sample Questions
+
+If you upload a research paper:
+- "What is the main argument of this paper?"
+- "Summarize the methodology section"
+- "What were the key findings?"
+
+If you upload a resume:
+- "What is the candidate's work experience?"
+- "List all the skills mentioned"
+
+---
+
+## Project Structure
+
+```
+STUDY-AI/
+├── backend/
+│   ├── app.py                 # Flask app, all API routes
+│   ├── models.py              # SQLAlchemy DB models (User, Document, Chat)
+│   ├── document_extractor.py  # Text extraction from PDF/DOCX/PPTX/TXT
+│   ├── groq_service.py        # Groq API integration
+│   ├── requirements.txt       # Python dependencies
+│   ├── .env                   # ⚠️ Secret keys (DO NOT commit to git)
+│   └── venv/                  # Python virtual environment (auto-created)
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/        # Reusable React components
+│   │   ├── pages/             # Page-level components (Login, Chat, etc.)
+│   │   ├── context/           # Auth context (JWT management)
+│   │   ├── App.jsx            # Root component, routing
+│   │   └── main.jsx           # Entry point
+│   ├── package.json           # Node.js dependencies
+│   └── vite.config.js         # Vite dev server config
+│
+├── README.md                  # This file
+├── SETUP.md                   # Quick setup reference
+├── API_DOCUMENTATION.md       # API endpoint reference
+└── DEPLOYMENT.md              # Production deployment guide
+```
+
+---
+
+## Environment Variables
+
+The `backend/.env` file must contain:
+
+| Variable       | Description                              | Example                          |
+|----------------|------------------------------------------|----------------------------------|
+| `SECRET_KEY`   | JWT signing secret (any string)          | `my-super-secret-key-123`        |
+| `GROQ_API_KEY` | API key from console.groq.com            | `gsk_abc123...`                  |
+
+---
+
+## Troubleshooting
+
+### `python` is not recognized
+- Make sure Python is installed and added to PATH
+- Try `py` instead of `python`
+- Re-install Python and check "Add to PATH" during setup
+
+### `venv\Scripts\activate` fails in PowerShell
+Run this once to allow script execution:
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+### Backend error: `GROQ_API_KEY not set`
+- Make sure `backend/.env` exists and contains your API key
+- The file must be named exactly `.env` (no `.txt` extension)
+
+### Backend error: `TypeError: proxies` / `GroqError`
+This is a package version conflict. Fix it:
+```cmd
+pip install --upgrade groq
+```
+
+### Frontend won't start / blank page
+```cmd
+cd frontend
+rmdir /s /q node_modules
+del package-lock.json
+npm install
+npm run dev
+```
+
+### Database errors on startup
+Delete the auto-generated database and restart:
+```cmd
+cd backend
+del answerxtractor.db
+python app.py
+```
+
+### Port already in use
+- Backend default port: **5000**
+- Frontend default port: **3000**
+
+Find and kill the process using the port:
+```cmd
+netstat -ano | findstr :5000
+taskkill /PID <PID_NUMBER> /F
+```
+
+---
+
+## Known Issues & Fixes
+
+| Issue | Root Cause | Fix |
+|-------|-----------|-----|
+| `groq.GroqError: api_key must be set` | Missing `.env` file | Create `backend/.env` with your API key |
+| `TypeError: Client.__init__() got unexpected keyword argument 'proxies'` | `groq==0.4.2` incompatible with newer `httpx` | `pip install --upgrade groq` |
+| Slow `npm install` on WSL | Node modules on Windows drive (`/mnt/d/`) | Move project to WSL home directory (`~/`) |
+| `venv\Scripts\activate` fails | PowerShell execution policy | Run `Set-ExecutionPolicy RemoteSigned` |
+
+---
+
+## API Reference
+
+Full API documentation is available in [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md).
+
+Key endpoints:
+- `POST /api/auth/register` — Register a new user
+- `POST /api/auth/login` — Login, returns JWT token
+- `POST /api/documents/upload` — Upload a document
+- `GET /api/documents` — List all documents
+- `POST /api/chat` — Ask a question about a document
+- `GET /api/chat/history` — Retrieve chat history
+
+---
+
+## Production Deployment
+
+See [`DEPLOYMENT.md`](./DEPLOYMENT.md) for instructions on deploying to a server using Gunicorn (backend) and a static host (frontend).
+
+---
+
+*Happy coding! 🚀*
