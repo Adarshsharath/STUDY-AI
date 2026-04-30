@@ -2,12 +2,15 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+from dotenv import load_dotenv
 import jwt
 import datetime
 import os
 from models import db, User, Document, Chat, Message
 from document_extractor import extract_text_from_file
 from groq_service import get_groq_response
+
+load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
@@ -47,14 +50,22 @@ def token_required(f):
 def register():
     data = request.get_json()
     
-    if not data or not data.get('email') or not data.get('password'):
-        return jsonify({'message': 'Email and password are required!'}), 400
+    if not data or not data.get('email') or not data.get('password') or not data.get('username'):
+        return jsonify({'message': 'Username, email and password are required!'}), 400
     
     if User.query.filter_by(email=data['email']).first():
-        return jsonify({'message': 'User already exists!'}), 400
+        return jsonify({'message': 'Email already exists!'}), 400
+    
+    if User.query.filter_by(username=data['username']).first():
+        return jsonify({'message': 'Username already exists!'}), 400
     
     hashed_password = generate_password_hash(data['password'])
-    new_user = User(email=data['email'], password_hash=hashed_password)
+    new_user = User(
+        username=data['username'],
+        email=data['email'],
+        phone_number=data.get('phone_number'),
+        password_hash=hashed_password
+    )
     
     db.session.add(new_user)
     db.session.commit()
@@ -65,10 +76,14 @@ def register():
 def login():
     data = request.get_json()
     
-    if not data or not data.get('email') or not data.get('password'):
-        return jsonify({'message': 'Email and password are required!'}), 400
+    identifier = data.get('username') or data.get('email')
+    if not identifier or not data.get('password'):
+        return jsonify({'message': 'Username/Email and password are required!'}), 400
     
-    user = User.query.filter_by(email=data['email']).first()
+    # Try to find user by username first, then by email
+    user = User.query.filter_by(username=identifier).first()
+    if not user:
+        user = User.query.filter_by(email=identifier).first()
     
     if not user or not check_password_hash(user.password_hash, data['password']):
         return jsonify({'message': 'Invalid credentials!'}), 401
@@ -82,6 +97,7 @@ def login():
         'token': token,
         'user': {
             'id': user.id,
+            'username': user.username,
             'email': user.email
         }
     }), 200

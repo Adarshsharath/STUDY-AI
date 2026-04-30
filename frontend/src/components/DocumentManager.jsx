@@ -26,11 +26,7 @@ const DocumentManager = ({ documents, onDocumentUploaded, onDeleteDocument, onSe
     formData.append('file', file)
 
     try {
-      await axios.post('/api/documents/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
+      await axios.post('/api/documents/upload', formData)
 
       setUploadProgress({ filename: file.name, status: 'success' })
       onDocumentUploaded()

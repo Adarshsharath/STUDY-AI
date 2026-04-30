@@ -39,26 +39,37 @@
   }
 }
 
-@layer utilities {
-  .light .bg-gray-950 {
-    @apply bg-[#f8f9fa];
-  }
+/* Light mode overrides - placed outside of @layer to avoid Tailwind processing issues */
+.light .text-gray-400 { color: #6b7280 !important; }
+.light .text-gray-500 { color: #4b5563 !important; }
+.light .text-gray-100 { color: #1f2937 !important; }
+.light .text-white { color: #111827 !important; }
 
-  .light .bg-gray-900\/50 {
-    @apply bg-white/80;
-  }
+.light .text-3xl, 
+.light .text-2xl, 
+.light .text-xl,
+.light h1,
+.light h2,
+.light h3 { 
+  color: #111827 !important; 
+}
 
-  .light .text-gray-400 {
-    @apply text-gray-500;
-  }
+.light .bg-gray-950 { background-color: #f8f9fa !important; }
+.light .bg-gray-900\/50 { background-color: #ffffff !important; }
+.light .bg-white\/10 { background-color: #e5e7eb !important; }
+.light .bg-white\/5 { background-color: #f3f4f6 !important; }
 
-  .light .text-white {
-    @apply text-gray-900;
-  }
+.light .border-white\/5, 
+.light .border-white\/10 { 
+  border-color: #e5e7eb !important; 
+}
 
-  .light .border-white\/5 {
-    @apply border-gray-200;
-  }
+.light .hover\:bg-white\/5:hover { 
+  background-color: #e5e7eb !important; 
+}
+
+.light .hover\:text-white:hover { 
+  color: #111827 !important; 
 }
 
 /* Custom scrollbar */
@@ -71,8 +82,16 @@
   @apply bg-gray-900;
 }
 
+.light ::-webkit-scrollbar-track {
+  background-color: #f3f4f6;
+}
+
 ::-webkit-scrollbar-thumb {
   @apply bg-gray-700 rounded-full;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -153,7 +172,7 @@
 .light .markdown-content h2,
 .light .markdown-content h3,
 .light .markdown-content h4 {
-  @apply text-gray-900;
+  color: #111827 !important;
 }
 
 .markdown-content h1 {
@@ -173,7 +192,8 @@
 }
 
 .light .markdown-content code {
-  @apply bg-gray-100 text-primary-600;
+  background-color: #f3f4f6 !important;
+  color: #4f46e5 !important;
 }
 
 .markdown-content pre {
@@ -181,7 +201,7 @@
 }
 
 .light .markdown-content pre {
-  @apply border-gray-200;
+  border-color: #e5e7eb !important;
 }
 
 .markdown-content pre code {
@@ -193,7 +213,8 @@
 }
 
 .light .markdown-content blockquote {
-  @apply text-gray-500 border-primary-400;
+  color: #4b5563 !important;
+  border-color: #6366f1 !important;
 }
 
 .markdown-content a {
@@ -211,7 +232,7 @@
 
 .light .markdown-content th,
 .light .markdown-content td {
-  @apply border-gray-200;
+  border-color: #e5e7eb !important;
 }
 
 .markdown-content th {
@@ -219,7 +240,7 @@
 }
 
 .light .markdown-content th {
-  @apply bg-gray-50;
+  background-color: #f9fafb !important;
 }
 
 .markdown-content hr {
@@ -227,5 +248,5 @@
 }
 
 .light .markdown-content hr {
-  @apply border-gray-200;
+  border-color: #e5e7eb !important;
 }

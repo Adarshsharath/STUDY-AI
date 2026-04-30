@@ -12,9 +12,13 @@ import {
     Network,
     CheckCircle2,
     XCircle,
+    AlertCircle,
     Trophy,
     Loader2,
-    ArrowRight
+    ArrowRight,
+    Maximize2,
+    Minimize2,
+    Download
 } from 'lucide-react'
 import mermaid from 'mermaid'
 
@@ -75,7 +79,7 @@ const StudyTools = ({ document, onClose }) => {
             <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="relative w-full max-w-5xl h-[85vh] glass-morphism rounded-3xl overflow-hidden flex flex-col shadow-2xl"
+                className={`relative w-full ${activeTab === 'mindmap' ? 'max-w-[95vw] h-[92vh]' : 'max-w-5xl h-[85vh]'} glass-morphism rounded-3xl overflow-hidden flex flex-col shadow-2xl transition-all duration-500`}
             >
                 {/* Header */}
                 <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/5">
@@ -399,6 +403,7 @@ const MindMapView = ({ structure }) => {
     const chartRef = useRef(null)
     const [renderError, setRenderError] = useState(null)
     const [isRendering, setIsRendering] = useState(true)
+    const [isFullscreen, setIsFullscreen] = useState(false)
 
     // Validate structure
     if (!structure || typeof structure !== 'object' || !structure.name) {
@@ -413,7 +418,7 @@ const MindMapView = ({ structure }) => {
         if (structure) {
             renderMermaid()
         }
-    }, [structure])
+    }, [structure, isFullscreen])
 
     const renderMermaid = async () => {
         if (!chartRef.current) return
@@ -421,10 +426,8 @@ const MindMapView = ({ structure }) => {
         setRenderError(null)
 
         const generateMermaidText = (node) => {
-            // Clean node names to avoid mermaid syntax issues
             const cleanName = (name) => {
                 if (!name) return 'Unknown'
-                // Remove special characters that might break mermaid syntax
                 return name.replace(/[(){}[\]"]/g, '').substring(0, 50)
             }
 
@@ -447,62 +450,112 @@ const MindMapView = ({ structure }) => {
 
         try {
             const mermaidText = generateMermaidText(structure)
-            console.log('Generated Mermaid syntax:', mermaidText)
-
-            const { svg } = await mermaid.render('mindmap-svg-' + Date.now(), mermaidText)
+            // Use a unique ID for each render to avoid conflicts
+            const id = `mindmap-${isFullscreen ? 'fs' : 'normal'}-${Date.now()}`
+            const { svg } = await mermaid.render(id, mermaidText)
             chartRef.current.innerHTML = svg
+            
+            // Adjust SVG to be responsive
+            const svgElement = chartRef.current.querySelector('svg')
+            if (svgElement) {
+                svgElement.style.width = '100%'
+                svgElement.style.height = 'auto'
+                svgElement.style.maxWidth = isFullscreen ? 'none' : '100%'
+            }
+            
             setIsRendering(false)
         } catch (err) {
             console.error('Mermaid render error:', err)
-            console.error('Structure:', structure)
             setRenderError(err.message || 'Error rendering mind map')
             setIsRendering(false)
             chartRef.current.innerHTML = `<p class="text-red-400">Error rendering mind map. ${err.message}</p>`
         }
     }
 
-    return (
-        <div className="h-full flex flex-col p-4">
+    const downloadSVG = () => {
+        const svgData = chartRef.current.innerHTML
+        const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `mindmap-${structure.name.substring(0, 20)}.svg`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    }
+
+    const content = (
+        <div className={`flex flex-col h-full ${isFullscreen ? 'bg-gray-950 p-6' : ''}`}>
             {/* Header */}
-            <div className="mb-6 text-center">
-                <h3 className="text-2xl font-bold text-white mb-2">Knowledge Map</h3>
-                <p className="text-gray-400 text-sm">Visual overview of key concepts and relationships</p>
+            <div className="mb-4 flex items-center justify-between">
+                <div>
+                    <h3 className="text-2xl font-bold text-white mb-1">Knowledge Map</h3>
+                    <p className="text-gray-400 text-sm">Visual overview of key concepts and relationships</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <button
+                        onClick={downloadSVG}
+                        className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors border border-white/10"
+                        title="Download as SVG"
+                    >
+                        <Download className="w-5 h-5" />
+                    </button>
+                    <button
+                        onClick={() => setIsFullscreen(!isFullscreen)}
+                        className="p-2 bg-primary-500/10 hover:bg-primary-500/20 rounded-lg text-primary-400 hover:text-primary-300 transition-colors border border-primary-500/20"
+                        title={isFullscreen ? "Exit Full Screen" : "Enter Full Screen"}
+                    >
+                        {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+                    </button>
+                </div>
             </div>
 
             {/* Mind Map Container */}
-            <div className="flex-1 overflow-auto bg-gradient-to-br from-indigo-900/20 via-purple-900/20 to-blue-900/20 backdrop-blur-sm rounded-3xl p-8 border border-white/10 shadow-2xl relative">
+            <div className={`flex-1 overflow-auto bg-gradient-to-br from-indigo-900/10 via-purple-900/10 to-blue-900/10 backdrop-blur-sm rounded-3xl border border-white/10 shadow-2xl relative ${isFullscreen ? 'p-10' : 'p-6'}`}>
                 {isRendering && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm rounded-3xl z-10">
                         <div className="flex flex-col items-center space-y-4">
-                            <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+                            <Loader2 className="w-12 h-12 text-primary-500 animate-spin" />
                             <p className="text-gray-300 animate-pulse font-medium">Rendering mind map...</p>
                         </div>
                     </div>
                 )}
                 <div
                     ref={chartRef}
-                    className="w-full h-full flex items-center justify-center mindmap-container"
+                    className="w-full h-full flex items-start justify-center mindmap-container"
                     style={{
-                        minHeight: '500px'
+                        minHeight: isFullscreen ? '80vh' : '450px'
                     }}
                 ></div>
             </div>
 
             {/* Footer */}
-            <div className="mt-4 flex items-center justify-center">
-                <div className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
-                    <Network className="w-4 h-4 text-primary-400" />
-                    <p className="text-xs text-gray-400">
-                        {renderError ? (
-                            <span className="text-red-400">⚠️ Error rendering. Try refreshing.</span>
-                        ) : (
-                            'Scroll to explore the full knowledge structure'
-                        )}
-                    </p>
+            {!isFullscreen && (
+                <div className="mt-4 flex items-center justify-center">
+                    <div className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+                        <Network className="w-4 h-4 text-primary-400" />
+                        <p className="text-xs text-gray-400">
+                            {renderError ? (
+                                <span className="text-red-400">⚠️ Error rendering. Try refreshing.</span>
+                            ) : (
+                                'Pinch or scroll to explore the knowledge structure'
+                            )}
+                        </p>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     )
+
+    if (isFullscreen) {
+        return (
+            <div className="fixed inset-0 z-[100] overflow-hidden">
+                {content}
+            </div>
+        )
+    }
+
+    return content
 }
 
 export default StudyTools

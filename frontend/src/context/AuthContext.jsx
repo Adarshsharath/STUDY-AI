@@ -35,9 +35,9 @@ export const AuthProvider = ({ children }) => {
     setLoading(false)
   }, [token])
 
-  const login = async (email, password) => {
+  const login = async (identifier, password) => {
     try {
-      const response = await axios.post('/api/auth/login', { email, password })
+      const response = await axios.post('/api/auth/login', { username: identifier, password })
       setToken(response.data.token)
       setUser(response.data.user)
       return { success: true }
@@ -49,9 +49,9 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  const register = async (email, password) => {
+  const register = async (username, email, password, phone_number) => {
     try {
-      await axios.post('/api/auth/register', { email, password })
+      await axios.post('/api/auth/register', { username, email, password, phone_number })
       return { success: true }
     } catch (error) {
       return {
