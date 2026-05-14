@@ -151,7 +151,6 @@ const Sidebar = ({ documents, chats, currentChat, onNewChat, onSelectChat, onDel
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{chat.preview}</p>
                         <p className="text-xs text-gray-500 mt-1">{chat.document_name}</p>
-                        <p className="text-xs text-gray-600 mt-1">{formatDate(chat.created_at)}</p>
                       </div>
                       <button
                         onClick={(e) => {

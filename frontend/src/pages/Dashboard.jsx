@@ -135,7 +135,7 @@ const Dashboard = () => {
 
       {showStudyLab && currentDocument && (
         <StudyTools
-          document={currentDocument}
+          docData={currentDocument}
           onClose={() => setShowStudyLab(false)}
         />
       )}

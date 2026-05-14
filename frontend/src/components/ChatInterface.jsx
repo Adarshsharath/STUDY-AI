@@ -224,10 +224,6 @@ const ChatInterface = ({ chat, document, onNewChat, onOpenStudyLab }) => {
                   <span className="text-[10px] text-gray-500 font-medium tracking-wider uppercase">
                     {message.sender === 'user' ? 'You' : 'AnswerXtractor'}
                   </span>
-                  <span className="text-[10px] text-gray-600">•</span>
-                  <span className="text-[10px] text-gray-500">
-                    {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
                 </div>
               </div>
             </div>

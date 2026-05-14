@@ -182,11 +182,6 @@ const DocumentManager = ({ documents, onDocumentUploaded, onDeleteDocument, onSe
                   <h3 className="font-medium text-white mb-2 truncate" title={doc.filename}>
                     {doc.filename}
                   </h3>
-
-                  <div className="flex items-center text-xs text-gray-400">
-                    <Calendar className="w-3 h-3 mr-1" />
-                    {formatDate(doc.uploaded_at)}
-                  </div>
                 </div>
               ))}
             </div>

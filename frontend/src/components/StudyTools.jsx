@@ -22,48 +22,70 @@ import {
 } from 'lucide-react'
 import mermaid from 'mermaid'
 
-// Initialize Mermaid with custom beautiful theme
-mermaid.initialize({
-    startOnLoad: true,
-    theme: 'base',
-    securityLevel: 'loose',
-    fontFamily: 'Inter, system-ui, sans-serif',
-    themeVariables: {
-        primaryColor: '#6366f1',
-        primaryTextColor: '#fff',
-        primaryBorderColor: '#4f46e5',
-        lineColor: '#8b5cf6',
-        secondaryColor: '#8b5cf6',
-        tertiaryColor: '#06b6d4',
-        background: '#1e1b4b',
-        mainBkg: '#312e81',
-        secondBkg: '#4c1d95',
-        tertiaryBkg: '#164e63',
-        nodeBorder: '#6366f1',
-        clusterBkg: '#1e293b',
-        clusterBorder: '#475569',
-        titleColor: '#f8fafc',
-        edgeLabelBackground: '#1e293b',
-        nodeTextColor: '#f8fafc',
-        fontSize: '16px'
-    }
-})
+// Mermaid initialization helper
+const initMermaid = (isLight) => {
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: isLight ? 'default' : 'base',
+        securityLevel: 'loose',
+        fontFamily: 'Inter, system-ui, sans-serif',
+        themeVariables: isLight ? {
+            primaryColor: '#4f46e5',
+            primaryTextColor: '#fff',
+            primaryBorderColor: '#4338ca',
+            lineColor: '#6366f1',
+            secondaryColor: '#818cf8',
+            tertiaryColor: '#22d3ee',
+            background: '#ffffff',
+            mainBkg: '#f3f4f6',
+            secondBkg: '#e5e7eb',
+            tertiaryBkg: '#cffafe',
+            nodeBorder: '#4f46e5',
+            clusterBkg: '#f9fafb',
+            clusterBorder: '#e5e7eb',
+            titleColor: '#111827',
+            edgeLabelBackground: '#f3f4f6',
+            nodeTextColor: '#111827',
+            fontSize: '16px'
+        } : {
+            primaryColor: '#6366f1',
+            primaryTextColor: '#fff',
+            primaryBorderColor: '#4f46e5',
+            lineColor: '#8b5cf6',
+            secondaryColor: '#8b5cf6',
+            tertiaryColor: '#06b6d4',
+            background: '#1e1b4b',
+            mainBkg: '#312e81',
+            secondBkg: '#4c1d95',
+            tertiaryBkg: '#164e63',
+            nodeBorder: '#6366f1',
+            clusterBkg: '#1e293b',
+            clusterBorder: '#475569',
+            titleColor: '#f8fafc',
+            edgeLabelBackground: '#1e293b',
+            nodeTextColor: '#f8fafc',
+            fontSize: '16px'
+        }
+    })
+}
 
-const StudyTools = ({ document, onClose }) => {
+const StudyTools = ({ docData, onClose }) => {
     const [activeTab, setActiveTab] = useState('flashcards')
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState(null)
     const [error, setError] = useState(null)
+    const isLight = document.body.classList.contains('light')
 
     useEffect(() => {
+        initMermaid(isLight)
         fetchStudyMaterial(activeTab)
-    }, [activeTab])
+    }, [activeTab, isLight])
 
     const fetchStudyMaterial = async (type) => {
         setLoading(true)
         setError(null)
         try {
-            const response = await axios.post(`/api/documents/${document?.id}/study-tools`, { type })
+            const response = await axios.post(`/api/documents/${docData?.id}/study-tools`, { type })
             console.log('Study tools API response:', response.data)
             setData(response.data)
         } catch (err) {
@@ -89,7 +111,7 @@ const StudyTools = ({ document, onClose }) => {
                         </div>
                         <div>
                             <h2 className="text-xl font-bold text-white">Study Lab</h2>
-                            <p className="text-xs text-gray-400 truncate max-w-[200px]">{document?.filename || 'Document'}</p>
+                            <p className="text-xs text-gray-400 truncate max-w-[200px]">{docData?.filename || 'Document'}</p>
                         </div>
                     </div>
 
@@ -176,6 +198,7 @@ const TabButton = ({ active, onClick, icon, label }) => (
 
 const FlashcardsView = ({ cards }) => {
     const [index, setIndex] = useState(0)
+    const isLight = document.body.classList.contains('light')
 
     // Validate cards data
     if (!cards || !Array.isArray(cards) || cards.length === 0) {
@@ -241,7 +264,7 @@ const FlashcardsView = ({ cards }) => {
                 </h2>
 
                 {/* Description */}
-                <p className="text-gray-200 text-lg leading-relaxed">
+                <p className={`${isLight ? 'text-gray-700' : 'text-gray-200'} text-lg leading-relaxed`}>
                     {currentCard.description}
                 </p>
 
